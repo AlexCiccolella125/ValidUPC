@@ -1,4 +1,5 @@
-readme
+Project in progress
 
+ValidUPC a simple command line tool for validating UPC codes
 
-running tests: python -m tests.test_check_digit
+Currently impletmented: reading from csv files
