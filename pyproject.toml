@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ValidUpc"
+description = "A simple CLI tool for checking if a UPC is valid."
+version = "0.0.1"
+authors = [
+    {name = "Alessandro Ciccolella", email = "aciccolella2015@fau.edu"},
+]
+dependencies = [
+    'importlib-metadata; python_version>="3.10"',
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+
+[project.scripts]
+ValidUpc = "ValidUpc.__main__:main"
