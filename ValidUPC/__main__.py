@@ -1,6 +1,6 @@
 import argparse
 import sys
-# from ValidUpc import upc_a
+from ValidUPC.UPC import validate_upc
 
 def parse_args():
     ap = argparse.ArgumentParser(allow_abbrev=False)
@@ -19,12 +19,17 @@ def main():
     args = parse_args()
     print(args)
     if '.txt' in args.infile.name:
-        print("txt")
+        # barcodes = [line.strip() for line in args.infile.readlines()]
+        pass
+
     elif '.csv' in args.infile.name:
-        print("csv")
+        barcodes = [line for line in args.infile.read().split(',')]
     else:
         print("not txt or csv")
     
+    for barcode in barcodes:
+        print(barcode)
+        print(validate_upc(barcode))
         
     # print(args.infile.read())
     print(args.infile.name)

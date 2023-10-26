@@ -1,8 +1,5 @@
 # algorithm description source: https://www.ibm.com/docs/en/zos/2.3.0?topic=parameters-check-digit-calculation-method
 
-# with open("barcodes.txt") as f:
-#     barcodes = [line.strip() for line in f.readlines()]
-
 # duplicates = set(x for x in barcodes if barcodes.count(x) > 1)
 
 # with open("duplicates.txt", "w") as f:
