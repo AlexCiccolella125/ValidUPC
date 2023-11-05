@@ -15,7 +15,19 @@
 
 def validate_upc(code:int) -> bool:
     digits = str(code)
-    return int(digits[-1]) == generate_checkdigit(int(digits[:-1]))
+    try: 
+        code = int(digits[-1])
+        check = generate_checkdigit(int(digits[:-1]))
+        return  code == check
+
+    except ValueError:
+        # pass
+        print("failed")
+        return False
+    except IndexError:
+        # pass
+        print("failed")
+        return False
 
 def generate_checkdigit(code:int) -> int:
     digits = [int(d) for d in str(code)]

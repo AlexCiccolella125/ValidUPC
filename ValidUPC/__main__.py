@@ -19,17 +19,18 @@ def main():
     args = parse_args()
     print(args)
     if '.txt' in args.infile.name:
-        # barcodes = [line.strip() for line in args.infile.readlines()]
+        barcodes = [line.strip() for line in args.infile.readlines()]
         pass
 
     elif '.csv' in args.infile.name:
-        barcodes = [line for line in args.infile.read().split(',')]
+        barcodes = [line.strip() for line in str(args.infile.read()).split('\n') if line]
+        print(barcodes)
     else:
         print("not txt or csv")
     
     for barcode in barcodes:
-        print(barcode)
-        print(validate_upc(barcode))
+        
+        print(f"{barcode} {validate_upc(barcode)}")
         
     # print(args.infile.read())
     print(args.infile.name)
