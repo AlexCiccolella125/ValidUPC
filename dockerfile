@@ -1,7 +1,7 @@
-FROM python:3.10-slim-buster
+FROM python:3.10
 
 # Set the working directory
-WORKDIR /
+WORKDIR /app
 
 # Copy the source code
 COPY . .
@@ -22,5 +22,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code
 COPY . .
 
-# Set the entrypoint
-ENTRYPOINT ["python", "app.py"]
+# # Set the entrypoint
+# ENTRYPOINT ["python", "app.py"]
