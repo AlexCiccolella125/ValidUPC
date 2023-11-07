@@ -1,18 +1,5 @@
 # algorithm description source: https://www.ibm.com/docs/en/zos/2.3.0?topic=parameters-check-digit-calculation-method
 
-# duplicates = set(x for x in barcodes if barcodes.count(x) > 1)
-
-# with open("duplicates.txt", "w") as f:
-#     for duplicate in duplicates:
-#         f.write(duplicate + "\n")
-
-
-# class UPC:
-
-#     def __init__(self, *, filepath='', duplicates='') -> None:
-#         self.filepath = filepath
-#         self.duplicates = duplicates
-
 def validate_upc(code:int) -> bool:
     digits = str(code)
     try: 
