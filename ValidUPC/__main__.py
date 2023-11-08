@@ -15,7 +15,7 @@ def parse_args():
         "--type_of_barcode",
         action="store_true",
         help="Define the type of barcode to validate",
-        default='UPC_A',
+        default="UPC_A",
     )
 
     return ap.parse_args()
@@ -38,4 +38,3 @@ def main():
 
     else:
         print("not txt or csv")
-    
