@@ -37,12 +37,3 @@ def main():
 
     else:
         print("not txt or csv")
-
-    # print(args.infile.read())
-    print(args.infile.name)
-
-
-# if __name__ == "__main__":
-#     main()
-
-print("okay")
