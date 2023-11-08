@@ -1,7 +1,7 @@
 import argparse
 import sys
 import re
-from ValidUPC.UPC import validate_upc
+from ValidUPC.UPC import validate_upc, Barcode
 
 
 def parse_args():
@@ -15,6 +15,7 @@ def parse_args():
         "--duplicates",
         action="store_true",
         help="signals to output duplicates",
+        default=False,
     )
 
     return ap.parse_args()
@@ -28,6 +29,8 @@ def main():
         barcodes = [
             line.strip() for line in re.split("\n|,", str(args.infile.read())) if line
         ]
+        if args.duplicates:
+            barcodes = list(dict(barcodes).keys())
 
         print(f"{len(barcodes)} found \n{barcodes}")
 
@@ -37,3 +40,4 @@ def main():
 
     else:
         print("not txt or csv")
+    
