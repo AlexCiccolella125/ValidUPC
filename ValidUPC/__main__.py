@@ -11,11 +11,11 @@ def parse_args():
         "outfile", nargs="?", type=argparse.FileType("w"), default=sys.stdout
     )
     ap.add_argument(
-        "-d",
-        "--duplicates",
+        "-t",
+        "--type_of_barcode",
         action="store_true",
-        help="signals to output duplicates",
-        default=False,
+        help="Define the type of barcode to validate",
+        default='UPC_A',
     )
 
     return ap.parse_args()
@@ -29,8 +29,6 @@ def main():
         barcodes = [
             line.strip() for line in re.split("\n|,", str(args.infile.read())) if line
         ]
-        if args.duplicates:
-            barcodes = list(dict(barcodes).keys())
 
         print(f"{len(barcodes)} found \n{barcodes}")
 

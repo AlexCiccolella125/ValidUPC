@@ -2,49 +2,55 @@
 from enum import Enum
 from dataclasses import dataclass
 
+
 class BarcodeType(Enum):
-    UPC_A = 'UPC-A'
-    UPC_E = 'UPC-E'
-    EAN_8 = 'EAN-8'
-    EAN_13 = 'EAN-13'
+    UPC_A = "UPC-A"
+    UPC_E = "UPC-E"
+    EAN_8 = "EAN-8"
+    EAN_13 = "EAN-13"
+
 
 @dataclass(kw_only=True, slots=True)
 class Barcode:
     code: int
-    type: BarcodeType 
+    type: BarcodeType
     checkdigit: bool = False
 
     def __post_init__(self):
+        # add checkdigit if not present,  Default: False
         if self.checkdigit:
             self.code = (code * 10) + generate_checkdigit(self.code)
 
+        # validate types
+        if not isinstance(self.code, int):
+            raise ValueError("code must be an integer")
         if not isinstance(self.type, BarcodeType):
-            raise ValueError('type must be an instance of BarcodeType')
+            raise ValueError("type must be an instance of BarcodeType")
 
         match (self.type, self.code):
             # UPC-A should have 12 digits with checkdigit
-            case ['UPC_A', code] if len(str(code)) == 12:
+            case ["UPC_A", code] if len(str(code)) == 12:
                 if not validate_upc(code):
                     print("UPC-A is invalid")
                     raise ValueError("UPC-A is invalid")
 
-            # # UPC-E should have 8 digits with checkdigit
-            # case [type, code] if type == "UPC-E" and len(str(code)) == 8:
-            #     if not validate_upc(code):
-            #         print("UPC-E is invalid")
-            #         raise ValueError("UPC-E is invalid")
-                
-            # case [type, code] if type == "EAN-8" and len(str(code)) == 8:
-            #     if not validate_upc(code):
-            #         print("EAN-8 is invalid")
-            #         raise ValueError("EAN-8 is invalid")
+            # UPC-E should have 8 digits with checkdigit
+            case [type, code] if type == "UPC-E" and len(str(code)) == 8:
+                if not validate_upc(code):
+                    print("UPC-E is invalid")
+                    raise ValueError("UPC-E is invalid")
 
-            # case [type, code] if type == "EAN-13" and len(str(code)) == 13:
-            #     if not validate_upc(code):
-            #         print("EAN-13 is invalid")
-            #         raise ValueError("EAN-13 is invalid")
-                
+            # EAN-8 should have 8 digits with checkdigit
+            case [type, code] if type == "EAN-8" and len(str(code)) == 8:
+                if not validate_upc(code):
+                    print("EAN-8 is invalid")
+                    raise ValueError("EAN-8 is invalid")
 
+            # EAN-13 should have 13 digits with checkdigit
+            case [type, code] if type == "EAN-13" and len(str(code)) == 13:
+                if not validate_upc(code):
+                    print("EAN-13 is invalid")
+                    raise ValueError("EAN-13 is invalid")
 
 
 def validate_upc(code) -> bool:
