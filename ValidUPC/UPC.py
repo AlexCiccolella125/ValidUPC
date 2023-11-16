@@ -4,22 +4,22 @@ from dataclasses import dataclass
 
 
 class BarcodeType(Enum):
-    UPC_A = "UPC-A"
-    UPC_E = "UPC-E"
-    EAN_8 = "EAN-8"
-    EAN_13 = "EAN-13"
+    UPC_A = 12
+    UPC_E = 7
+    EAN_8 = 8
+    EAN_13 = 13
 
 
 @dataclass(kw_only=True, slots=True)
 class Barcode:
     code: int
     type: BarcodeType
-    checkdigit: bool = False
+    # checkdigit: bool = False
 
     def __post_init__(self):
         # add checkdigit if not present,  Default: False
-        if self.checkdigit:
-            self.code = (code * 10) + generate_checkdigit(self.code)
+        # if self.checkdigit:
+        #     self.code = (code * 10) + generate_checkdigit(self.code)
 
         # validate types
         if not isinstance(self.code, int):

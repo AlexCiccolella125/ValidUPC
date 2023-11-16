@@ -1,5 +1,9 @@
 import pytest
+import sys
+sys.path.append("../ValidUPC")
+# from ..ValidUPC import UPC
 from ValidUPC.UPC import validate_upc, generate_checkdigit, Barcode, BarcodeType
+# from ..ValidUPC import validate_upc, generate_checkdigit, Barcode, BarcodeType
 
 
 def test_generate_checkdigit():
@@ -30,17 +34,21 @@ def test_validate_upc():
 
 
 def test_barcode_creation():
-    barcode = Barcode(type=BarcodeType.UPC_A, code="123456789012")
+    barcode = Barcode(type=BarcodeType.UPC_A, code=123456789012)
+    print(barcode)
     assert barcode.type == BarcodeType.UPC_A
-    assert barcode.code == "123456789012"
+    assert barcode.code == 123456789012
 
 
 def test_invalid_barcode_type():
     with pytest.raises(ValueError):
         Barcode(type="InvalidType", code="123456789012")
-        Barcode(type="UPC_A", code="19012")
+        Barcode(type="UPC_A", code=19012)
 
 
 if __name__ == "__main__":
-    print(Barcode(type="InvalidType", code="19012"))
+    barcode = Barcode(type=BarcodeType.UPC_A, code=123456789012)
+    barcode = Barcode(type=BarcodeType.UPC_A, code=12345012)
+
+    print(barcode.type.value)
     pytest.main()
