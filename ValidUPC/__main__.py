@@ -1,7 +1,7 @@
 import argparse
 import sys
 import re
-from ValidUPC.UPC import validate_upc, Barcode
+from ValidUPC.UPC import BarcodeType, Barcode
 
 
 def parse_args():
@@ -11,11 +11,22 @@ def parse_args():
         "outfile", nargs="?", type=argparse.FileType("w"), default=sys.stdout
     )
     ap.add_argument(
+        "errfile", nargs="?", type=argparse.FileType("w"), default=sys.stderr
+    )
+    ap.add_argument(
         "-t",
         "--type_of_barcode",
-        action="store_true",
         help="Define the type of barcode to validate",
         default="UPC_A",
+        nargs=1,
+    )
+    
+    ap.add_argument(
+        "-v",
+        "--verbose",
+        default=False,
+        action=argparse.BooleanOptionalAction,
+        help="Verbose output, does not go to outfile",
     )
 
     return ap.parse_args()
@@ -23,18 +34,31 @@ def parse_args():
 
 def main():
     args = parse_args()
-    print(args)
-    if ".txt" or ".csv" in args.infile.name:
+
+    if args.verbose:
         print("reading file")
-        barcodes = [
-            line.strip() for line in re.split("\n|,", str(args.infile.read())) if line
-        ]
 
-        print(f"{len(barcodes)} found \n{barcodes}")
+    barcodes = [
+        line.strip() for line in re.split("\n|,", str(args.infile.read())) if line
+    ]
 
+    if args.verbose:
+        print(f"{len(barcodes)} barcodes found")
+
+    if args.verbose:
         print("validating barcodes")
-        for barcode in barcodes:
-            print(f"{barcode} {validate_upc(barcode)}")
 
-    else:
-        print("not txt or csv")
+    for barcode in barcodes:
+        try:
+            args.outfile.write(
+                str(Barcode(code=int(barcode), type=BarcodeType[args.type_of_barcode]))
+                + "\n"
+            )
+
+        except ValueError:
+            args.errfile.write(f"Invalid {args.type_of_barcode}: {barcode}\n")
+            continue
+
+
+if __name__ == "__main__":
+    main()
