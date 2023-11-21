@@ -6,12 +6,12 @@ from ValidUPC.UPC import BarcodeType, Barcode
 
 def parse_args():
     ap = argparse.ArgumentParser(allow_abbrev=False)
-    ap.add_argument("infile", nargs="?", type=argparse.FileType("r"), default=sys.stdin)
+    ap.add_argument("-i", "--infile", nargs="?", type=argparse.FileType("r"), default=sys.stdin)
     ap.add_argument(
-        "outfile", nargs="?", type=argparse.FileType("w"), default=sys.stdout
+        "-o", "--outfile", nargs="?", type=argparse.FileType("w"), default=sys.stdout
     )
     ap.add_argument(
-        "errfile", nargs="?", type=argparse.FileType("w"), default=sys.stderr
+        "-e","--errfile", nargs="?", type=argparse.FileType("w"), default=sys.stderr
     )
     ap.add_argument(
         "-t",
