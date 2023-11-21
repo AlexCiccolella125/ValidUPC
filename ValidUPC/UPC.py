@@ -10,47 +10,23 @@ class BarcodeType(Enum):
     EAN_13 = 13
 
 
-@dataclass(kw_only=True, slots=True)
+@dataclass(kw_only=True, slots=True, repr=True, eq=True, order=False, frozen=False)
 class Barcode:
     code: int
     type: BarcodeType
-    # checkdigit: bool = False
 
     def __post_init__(self):
-        # add checkdigit if not present,  Default: False
-        # if self.checkdigit:
-        #     self.code = (code * 10) + generate_checkdigit(self.code)
-
-        # validate types
+        # validate Barcode
         if not isinstance(self.code, int):
             raise ValueError("code must be an integer")
         if not isinstance(self.type, BarcodeType):
             raise ValueError("type must be an instance of BarcodeType")
-
-        match (self.type, self.code):
-            # UPC-A should have 12 digits with checkdigit
-            case ["UPC_A", code] if len(str(code)) == 12:
-                if not validate_upc(code):
-                    print("UPC-A is invalid")
-                    raise ValueError("UPC-A is invalid")
-
-            # UPC-E should have 8 digits with checkdigit
-            case [type, code] if type == "UPC-E" and len(str(code)) == 8:
-                if not validate_upc(code):
-                    print("UPC-E is invalid")
-                    raise ValueError("UPC-E is invalid")
-
-            # EAN-8 should have 8 digits with checkdigit
-            case [type, code] if type == "EAN-8" and len(str(code)) == 8:
-                if not validate_upc(code):
-                    print("EAN-8 is invalid")
-                    raise ValueError("EAN-8 is invalid")
-
-            # EAN-13 should have 13 digits with checkdigit
-            case [type, code] if type == "EAN-13" and len(str(code)) == 13:
-                if not validate_upc(code):
-                    print("EAN-13 is invalid")
-                    raise ValueError("EAN-13 is invalid")
+        if len(str(self.code)) != self.type.value:
+            raise ValueError(
+                f"code must be {self.type.value} digits long, got {len(str(self.code))}"
+            )
+        if not validate_upc(self.code):
+            raise ValueError("invalid barcode")
 
 
 def validate_upc(code) -> bool:
@@ -61,12 +37,9 @@ def validate_upc(code) -> bool:
         return code == check
 
     except ValueError:
-        # pass
-        print("failed")
         return False
+    
     except IndexError:
-        # pass
-        print("failed")
         return False
 
 
