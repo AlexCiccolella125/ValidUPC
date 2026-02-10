@@ -43,12 +43,21 @@ def test_barcode_creation():
 def test_invalid_barcode_type():
     with pytest.raises(ValueError):
         Barcode(type="InvalidType", code="123456789012")
-        Barcode(type="UPC_A", code=19012)
 
 
-if __name__ == "__main__":
-    barcode = Barcode(type=BarcodeType.UPC_A, code=123456789012)
-    barcode = Barcode(type=BarcodeType.UPC_A, code=12345012)
+def test_barcode_wrong_length():
+    with pytest.raises(ValueError, match="digits long"):
+        Barcode(type=BarcodeType.UPC_A, code=19012)
 
-    print(barcode.type.value)
-    pytest.main()
+
+def test_barcode_invalid_check_digit():
+    with pytest.raises(ValueError, match="invalid barcode"):
+        Barcode(type=BarcodeType.UPC_A, code=725272730701)
+
+
+def test_validate_upc_non_numeric():
+    assert not validate_upc("abc")
+
+
+def test_validate_upc_empty():
+    assert not validate_upc("")
