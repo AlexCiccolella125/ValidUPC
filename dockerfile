@@ -1,5 +1,8 @@
 FROM python:3.10
 
+# Install system dependency for pyzbar
+RUN apt-get update && apt-get install -y libzbar0 && rm -rf /var/lib/apt/lists/*
+
 # Set the working directory
 WORKDIR /app
 COPY ./requirements.txt /app/requirements.txt
@@ -11,9 +14,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the source code
 COPY . .
 
-# # Build the application
-# RUN python -m build
-
-# # Install the application
-# RUN pip install --no-cache-dir dist/*.whl
-
+# Install the application in editable mode
+RUN pip install -e .
