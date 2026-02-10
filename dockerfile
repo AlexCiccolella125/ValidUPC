@@ -1,8 +1,5 @@
 FROM python:3.10
 
-# Install system dependency for pyzbar
-RUN apt-get update && apt-get install -y libzbar0 && rm -rf /var/lib/apt/lists/*
-
 # Set the working directory
 WORKDIR /app
 COPY ./requirements.txt /app/requirements.txt

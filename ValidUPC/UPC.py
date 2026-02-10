@@ -10,20 +10,6 @@ class BarcodeType(Enum):
     EAN_13 = 13
 
 
-# BarcodeType -> python-barcode library format name
-BARCODE_FORMAT_MAP = {
-    BarcodeType.UPC_A: "upca",
-    BarcodeType.EAN_8: "ean8",
-    BarcodeType.EAN_13: "ean13",
-}
-
-# pyzbar decoded type string -> BarcodeType
-PYZBAR_TYPE_MAP = {
-    "UPCA": BarcodeType.UPC_A,
-    "UPCE": BarcodeType.UPC_E,
-    "EAN8": BarcodeType.EAN_8,
-    "EAN13": BarcodeType.EAN_13,
-}
 
 
 @dataclass(kw_only=True, slots=True, repr=True, eq=True, order=False, frozen=False)

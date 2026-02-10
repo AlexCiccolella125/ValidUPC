@@ -1,7 +1,4 @@
 setuptools
 build
 pytest
-python-barcode[images]
-pyzbar
 Pillow
-qrcode[pil]

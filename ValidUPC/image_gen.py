@@ -1,7 +1,13 @@
-import barcode
-from barcode.writer import ImageWriter
-import qrcode
-from ValidUPC.UPC import Barcode, BarcodeType, BARCODE_FORMAT_MAP
+from ValidUPC.UPC import Barcode, BarcodeType
+from ValidUPC._codecs.barcode_encode import (
+    encode_upc_a, encode_ean_8, encode_ean_13, render_barcode,
+)
+
+_ENCODERS = {
+    BarcodeType.UPC_A: encode_upc_a,
+    BarcodeType.EAN_8: encode_ean_8,
+    BarcodeType.EAN_13: encode_ean_13,
+}
 
 
 def generate_barcode_image(barcode_obj: Barcode, output_path: str,
@@ -14,23 +20,20 @@ def generate_barcode_image(barcode_obj: Barcode, output_path: str,
         image_format: "png" or "svg".
 
     Returns:
-        The full path of the generated file (extension appended by library).
+        The full path of the generated file (extension appended).
 
     Raises:
         ValueError: If the barcode type is not supported for image generation.
     """
-    fmt = BARCODE_FORMAT_MAP.get(barcode_obj.type)
-    if fmt is None:
+    encoder = _ENCODERS.get(barcode_obj.type)
+    if encoder is None:
         raise ValueError(
             f"{barcode_obj.type.name} image generation is not supported"
         )
 
-    # Zero-pad to correct length, then strip check digit (library recomputes it)
-    code_str = str(barcode_obj.code).zfill(barcode_obj.type.value)[:-1]
-
-    writer = ImageWriter() if image_format == "png" else None
-    bc = barcode.get(fmt, code_str, writer=writer)
-    return bc.save(output_path)
+    code_str = str(barcode_obj.code).zfill(barcode_obj.type.value)
+    bit_pattern = encoder(code_str)
+    return render_barcode(bit_pattern, output_path, image_format)
 
 
 def generate_qr_image(data: str, output_path: str) -> str:
@@ -43,7 +46,5 @@ def generate_qr_image(data: str, output_path: str) -> str:
     Returns:
         The full path of the generated PNG file.
     """
-    img = qrcode.make(data)
-    full_path = output_path + ".png"
-    img.save(full_path)
-    return full_path
+    from ValidUPC._codecs.qr_encode import save_qr
+    return save_qr(data, output_path)

@@ -10,11 +10,7 @@ authors = [
     {name = "Alessandro Ciccolella", email = "aciccolella2015@fau.edu"},
 ]
 dependencies = [
-    'importlib-metadata; python_version>="3.10"',
-    'python-barcode[images]',
-    'pyzbar',
     'Pillow',
-    'qrcode[pil]',
 ]
 
 classifiers = [

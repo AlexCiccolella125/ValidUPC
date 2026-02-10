@@ -1,7 +1,12 @@
 from dataclasses import dataclass
-from PIL import Image
-from pyzbar.pyzbar import decode
-from ValidUPC.UPC import Barcode, BarcodeType, PYZBAR_TYPE_MAP
+from ValidUPC.UPC import Barcode, BarcodeType
+from ValidUPC._codecs.barcode_decode import decode_barcode_from_image, decode_ean8_from_image
+
+_TYPE_MAP = {
+    "UPC_A": BarcodeType.UPC_A,
+    "EAN_8": BarcodeType.EAN_8,
+    "EAN_13": BarcodeType.EAN_13,
+}
 
 
 @dataclass
@@ -24,27 +29,22 @@ def read_barcode_image(image_path: str,
         FileNotFoundError: If image_path does not exist.
         ValueError: If no valid barcodes are found.
     """
-    img = Image.open(image_path)
-    decoded = decode(img)
+    # Try EAN-8 decoder if expected or as fallback
+    if expected_type == BarcodeType.EAN_8:
+        decoded = decode_ean8_from_image(image_path)
+    else:
+        decoded = decode_barcode_from_image(image_path)
+        # Fallback to EAN-8 if nothing found
+        if not decoded:
+            decoded = decode_ean8_from_image(image_path)
 
     if not decoded:
         raise ValueError(f"No barcodes found in {image_path}")
 
     results = []
     for d in decoded:
-        code_str = d.data.decode("utf-8")
-        pyzbar_type = d.type
-
-        barcode_type = PYZBAR_TYPE_MAP.get(pyzbar_type)
-
-        # pyzbar often reports UPC-A as EAN-13 with a leading zero.
-        # Since int() drops leading zeros, EAN-13 codes starting with 0
-        # won't pass length validation, so treat them as UPC-A.
-        if (barcode_type == BarcodeType.EAN_13
-                and code_str.startswith("0")
-                and len(code_str) == 13):
-            barcode_type = BarcodeType.UPC_A
-            code_str = code_str[1:]  # strip leading zero
+        code_str = d["code_str"]
+        barcode_type = _TYPE_MAP.get(d["barcode_type"])
 
         if barcode_type is None:
             continue
@@ -78,16 +78,9 @@ def read_qr_image(image_path: str) -> list[QRResult]:
         FileNotFoundError: If image_path does not exist.
         ValueError: If no QR codes are found.
     """
-    img = Image.open(image_path)
-    decoded = decode(img)
+    from ValidUPC._codecs.qr_decode import decode_qr_from_image
 
-    results = [
-        QRResult(data=d.data.decode("utf-8"))
-        for d in decoded
-        if d.type == "QRCODE"
-    ]
-
-    if not results:
+    decoded_strings = decode_qr_from_image(image_path)
+    if not decoded_strings:
         raise ValueError(f"No QR codes found in {image_path}")
-
-    return results
+    return [QRResult(data=s) for s in decoded_strings]
